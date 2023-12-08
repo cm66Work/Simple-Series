@@ -18,7 +18,18 @@ namespace com.ES.SimpleSystems.SaveSystem
             instance = this;
             DontDestroyOnLoad(this.gameObject);
 
+            if (m_disableDataPersistence)
+                Debug.LogWarning("WARNING::SimpleSaveSystemCore::Data Persistence is disabled");
+
             this.m_dataHandler = new FileDataHandler(Application.persistentDataPath, m_fileName);
+
+            this.m_selectedProfileID = m_dataHandler.GetMostRecentlyUpdatedProfileID();
+            if (m_overrideSelectedProfileID)
+            {
+                this.m_selectedProfileID = m_overrideProfileID;
+                Debug.LogWarning("WARNING::SimpleSaveSystemCore:: Overriding selected profile ID with: " 
+                    + m_selectedProfileID);
+            }
         }
 
         private void OnEnable()
@@ -33,6 +44,13 @@ namespace com.ES.SimpleSystems.SaveSystem
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
 
+        private void OnApplicationQuit()
+        {
+            SaveGame();
+        }
+        #endregion
+
+        #region Scene Loading
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             // Gets triggered before Start().
@@ -43,14 +61,13 @@ namespace com.ES.SimpleSystems.SaveSystem
         {
             SaveGame();
         }
-        private void OnApplicationQuit()
-        {
-            SaveGame();
-        }
         #endregion
 
         [Header("Debugging")]
         [SerializeField] private bool m_initializeDataIfNull = false;
+        [SerializeField] private bool m_disableDataPersistence = false;
+        [SerializeField] private bool m_overrideSelectedProfileID = false;
+        [SerializeField] private string m_overrideProfileID = "testID";
 
         [Header("File Store Config")]
         [SerializeField] private string m_fileName;
@@ -58,6 +75,8 @@ namespace com.ES.SimpleSystems.SaveSystem
         private GameData m_gameData;
         private List<IDataPersistence> m_dataPersistenceObjects;
         private FileDataHandler m_dataHandler;
+
+        private string m_selectedProfileID = "";
 
         #region New Game
         public void NewGame()
@@ -69,8 +88,11 @@ namespace com.ES.SimpleSystems.SaveSystem
         #region LoadGame
         public void LoadGame()
         {
+            if (m_disableDataPersistence)
+                return;
+
             // load any saved data from file using the data handler.
-            this.m_gameData = m_dataHandler.Load();
+            this.m_gameData = m_dataHandler.Load(m_selectedProfileID);
 
             // start a new game if the data is null AND we are configured to initialize data for debugging purposes.
             if(null == this.m_gameData && m_initializeDataIfNull)
@@ -95,14 +117,36 @@ namespace com.ES.SimpleSystems.SaveSystem
         #region SaveGame
         public void SaveGame()
         {
+            if (m_disableDataPersistence)
+                return;
+
+            // if we do not have may data to save, log a warning here
+            if(null == this.m_gameData)
+            {
+                Debug.LogWarning("WARNING::SimpleSaveSystemCore:: No data was found, a New Game" +
+                    "needs to be started before data can be saved.");
+                return;
+            }
+
             // pass the data to other scripts so they can update it.
             foreach (IDataPersistence dataPersistenceObject in m_dataPersistenceObjects)
             {
                 dataPersistenceObject.SaveData(ref m_gameData);
             }
 
+            // timestamp the data so we know when it was last saved.
+            m_gameData.lastUpdated = System.DateTime.Now.ToBinary();
+
             // save that data to a file using the data handler.
-            this.m_dataHandler.Save(m_gameData);
+            this.m_dataHandler.Save(m_gameData, m_selectedProfileID);
+        }
+        private List<IDataPersistence> FindAllDataPersistenceObjects()
+        {
+            IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>()
+                .OfType<IDataPersistence>(); 
+
+            return new List<IDataPersistence>(dataPersistenceObjects);
+            
         }
         #endregion
 
@@ -111,13 +155,17 @@ namespace com.ES.SimpleSystems.SaveSystem
             return m_gameData != null;
         }
 
-        private List<IDataPersistence> FindAllDataPersistenceObjects()
+        public Dictionary<string, GameData> GetAllProfilesGameData()
         {
-            IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>()
-                .OfType<IDataPersistence>(); 
+            return m_dataHandler.LoadAllProfiles();
+        }
 
-            return new List<IDataPersistence>(dataPersistenceObjects);
-            
+        public void ChangeSelectedProfileID(string newProfileID)
+        {
+            // update the profile to use for saving and loading.
+            this.m_selectedProfileID = newProfileID;
+            // load the game, which will use that profile, updating our game data accordingly.
+            LoadGame();
         }
     }
 }

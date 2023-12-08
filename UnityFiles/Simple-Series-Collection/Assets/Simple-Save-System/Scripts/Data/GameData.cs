@@ -7,6 +7,11 @@ namespace com.ES.SimpleSystems.SaveSystem
     [System.Serializable]
     public class GameData 
     {
+        // time stamp for when the this save was last played,
+        // is used to determine which save gets defaulted to when 
+        // the game starts.
+        public long lastUpdated;
+
         public int exampleInt;
         public float exampleFloat;
 
