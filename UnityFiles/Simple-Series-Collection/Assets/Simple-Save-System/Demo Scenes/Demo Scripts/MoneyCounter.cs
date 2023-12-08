@@ -1,7 +1,8 @@
+using com.ES.SimpleSystems.SaveSystem;
 using TMPro;
 using UnityEngine;
 
-namespace com.ES.SimpleSystems.SaveSystem
+namespace com.ES.SimpleSystems.Demos
 {
     public class MoneyCounter : MonoBehaviour, IDataPersistence
     {
@@ -10,6 +11,7 @@ namespace com.ES.SimpleSystems.SaveSystem
         public void LoadData(GameData data)
         {
             this.m_money = data.exampleInt;
+            m_moneyTMP.text = this.m_money.ToString();
         }
 
         public void SaveData(ref GameData data)
@@ -26,12 +28,13 @@ namespace com.ES.SimpleSystems.SaveSystem
         public void AddMoney()
         {
             m_money += 10;
-            if(m_moneyTMP == null)
-            {
-                m_moneyTMP = this.GetComponent<TMP_Text>();
-            }
-
             m_moneyTMP.text = m_money.ToString();
+        }
+
+
+        private void Awake()
+        {
+            m_moneyTMP = this.GetComponent<TMP_Text>();
         }
         #endregion
     }

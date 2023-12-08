@@ -7,10 +7,10 @@ namespace com.ES.SimpleSystems.SaveSystem
     [System.Serializable]
     public class GameData 
     {
-        public List<FloatReference> DefaultSaveDataVariables;
-
         public int exampleInt;
         public float exampleFloat;
+
+        public SerializableDictionary<string, bool> exampleDictionary;
 
         /// <summary>
         /// the values defined in this constructor will be default values
@@ -20,6 +20,8 @@ namespace com.ES.SimpleSystems.SaveSystem
         {
             this.exampleInt = 1;
             this.exampleFloat = 1.0f;
+            this.exampleDictionary = new SerializableDictionary<string, bool>();
+            this.exampleDictionary.Add("test", false);
         }
     }
 }
