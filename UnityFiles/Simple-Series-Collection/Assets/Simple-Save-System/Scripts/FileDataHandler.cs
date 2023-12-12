@@ -17,6 +17,11 @@ namespace com.ES.SimpleSystems.SaveSystem
         {
             m_dataDirPath = Path.Combine(dataDirPath, "SaveGames");
             this.m_dataFileName = dataFileName;
+
+            if(!Directory.Exists(m_dataDirPath))
+            {
+                Directory.CreateDirectory(m_dataDirPath);
+            }
         }
 
         public GameData Load(string profileID, bool allowRestoreFromBackup = true)

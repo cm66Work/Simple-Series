@@ -350,11 +350,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnSaveSlotClicked
+      value: OnClearClicked
       objectReference: {fileID: 0}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, Assembly-CSharp
+      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, com.ES.SimpleSeries.SimpleSaveSystem
       objectReference: {fileID: 0}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
@@ -362,7 +362,7 @@ PrefabInstance:
       objectReference: {fileID: 773246282}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: com.ES.SimpleSystems.Demos.SaveSlot, Assembly-CSharp
+      value: com.ES.SimpleSystems.Demos.SaveSlot, com.ES.SimpleSeries.SimpleSaveSystem
       objectReference: {fileID: 0}
     - target: {fileID: 1461730835354194840, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_Pivot.x
@@ -842,6 +842,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1074407701}
+    - target: {fileID: 6763007334264884136, guid: dd1186f98f154734090be478d3a9660e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, com.ES.SimpleSeries.SimpleSaveSystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 6763007334264884136, guid: dd1186f98f154734090be478d3a9660e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: com.ES.SimpleSystems.Demos.SaveSlot, com.ES.SimpleSeries.SimpleSaveSystem
+      objectReference: {fileID: 0}
     - target: {fileID: 8318501431963157554, guid: dd1186f98f154734090be478d3a9660e, type: 3}
       propertyPath: m_profileID
       value: 3
@@ -1331,6 +1339,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1074407701}
+    - target: {fileID: 6763007334264884136, guid: dd1186f98f154734090be478d3a9660e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, com.ES.SimpleSeries.SimpleSaveSystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 6763007334264884136, guid: dd1186f98f154734090be478d3a9660e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: com.ES.SimpleSystems.Demos.SaveSlot, com.ES.SimpleSeries.SimpleSaveSystem
+      objectReference: {fileID: 0}
     - target: {fileID: 8318501431963157554, guid: dd1186f98f154734090be478d3a9660e, type: 3}
       propertyPath: m_profileID
       value: 2
@@ -1572,7 +1588,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, Assembly-CSharp
+      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, com.ES.SimpleSeries.SimpleSaveSystem
       objectReference: {fileID: 0}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
@@ -1580,7 +1596,7 @@ PrefabInstance:
       objectReference: {fileID: 1029446131}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: com.ES.SimpleSystems.Demos.SaveSlot, Assembly-CSharp
+      value: com.ES.SimpleSystems.Demos.SaveSlot, com.ES.SimpleSeries.SimpleSaveSystem
       objectReference: {fileID: 0}
     - target: {fileID: 1461730835354194840, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_Pivot.x
@@ -3016,7 +3032,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, Assembly-CSharp
+      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, com.ES.SimpleSeries.SimpleSaveSystem
       objectReference: {fileID: 0}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
@@ -3024,7 +3040,7 @@ PrefabInstance:
       objectReference: {fileID: 8958330469862096903}
     - target: {fileID: 263638068480395770, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: com.ES.SimpleSystems.Demos.SaveSlot, Assembly-CSharp
+      value: com.ES.SimpleSystems.Demos.SaveSlot, com.ES.SimpleSeries.SimpleSaveSystem
       objectReference: {fileID: 0}
     - target: {fileID: 1461730835354194840, guid: 7bdba4e35791ca14892c6384154ece70, type: 3}
       propertyPath: m_Pivot.x
@@ -3235,6 +3251,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1074407701}
+    - target: {fileID: 6763007334264884136, guid: dd1186f98f154734090be478d3a9660e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: com.ES.SimpleSystems.Demos.SaveSlotsMenu, com.ES.SimpleSeries.SimpleSaveSystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 6763007334264884136, guid: dd1186f98f154734090be478d3a9660e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: com.ES.SimpleSystems.Demos.SaveSlot, com.ES.SimpleSeries.SimpleSaveSystem
+      objectReference: {fileID: 0}
     - target: {fileID: 8318501431963157554, guid: dd1186f98f154734090be478d3a9660e, type: 3}
       propertyPath: m_profileID
       value: 1
