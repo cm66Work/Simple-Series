@@ -10,6 +10,9 @@ namespace com.ES.SimpleSystems.SaveSystem
     {
         private string m_dataDirPath = "";
         private string m_dataFileName = "";
+       
+        // file backup.
+        private readonly string m_backupExtension = ".bak";
 
         public FileDataHandler(string dataDirPath, string dataFileName)
         {
@@ -17,7 +20,7 @@ namespace com.ES.SimpleSystems.SaveSystem
             this.m_dataFileName = dataFileName;
         }
 
-        public GameData Load(string profileID)
+        public GameData Load(string profileID, bool allowRestoreFromBackup = true)
         {
             // base case - if the profileID is null, return right away
             if (null == profileID)
@@ -49,8 +52,26 @@ namespace com.ES.SimpleSystems.SaveSystem
             }
             catch(Exception e)
             {
-                Debug.LogError("Error::FileDataHandler:: Error occurred when trying to load data from file " +
-                    fullPath + "\n" + e);
+                // since we are calling load() recursively, we need to account for the case where
+                // the rollback succeeds, but data is still failing to load for some other reason,
+                // which without this check may cause an infinite recursion loop.
+                if(allowRestoreFromBackup)
+                {
+                    Debug.LogWarning($"WARNING::FileDataHandler:: Failed to load data file." +
+                        $"Attempting to roll back. \n {e}");
+                    bool rollbackSuccess = AttemptRollBack(fullPath);
+                    if (rollbackSuccess)
+                    {
+                        // try to load again recursively.
+                        loadedData = Load(profileID, false);
+                    }
+                }
+                // if we hit this else block, one possibility is that the backup file is also corrupt.
+                else
+                {
+                    Debug.LogError($"ERROR::FileDataHandler:: Failed to load file at path: {fullPath}" +
+                        $" and backup did not work. \n {e}");
+                }
             }
 
             return loadedData;
@@ -64,6 +85,7 @@ namespace com.ES.SimpleSystems.SaveSystem
 
             // Use Path.Combine to account for different OS's having different path separators.
             string fullPath = Path.Combine(m_dataDirPath, profileID, m_dataFileName);
+            string backupFilePath = fullPath + m_backupExtension;
             try
             {
                 // create the directory the file will be written to if it does not exists. 
@@ -79,6 +101,20 @@ namespace com.ES.SimpleSystems.SaveSystem
                     {
                         writer.Write(dataToStore);
                     }
+                }
+
+                // verify the newly saved file can be loaded successfully.
+                GameData verifiedGameData = Load(profileID);
+                // if the data can be verified, back it up.
+                if(null != verifiedGameData)
+                {
+                    File.Copy(fullPath, backupFilePath, true);
+                }
+                // otherwise, something went wrong and we should throw an exception.
+                else
+                {
+                    throw new Exception("EXCEPTION::FileDataHandler:: Save file could not be" +
+                        "verified and backup could not be created.");
                 }
             }
             catch (Exception e)
@@ -192,6 +228,37 @@ namespace com.ES.SimpleSystems.SaveSystem
                 }
             }
             return mostRecentProfileID;
+        }
+
+        private bool AttemptRollBack(string fullPath)
+        {
+            bool success = false;
+            string backupFilePath = fullPath + m_backupExtension;
+            try
+            {
+                // if the file exists, attempt to roll back to it by overwriting the original file.
+                if(File.Exists(backupFilePath))
+                {
+                    File.Copy(backupFilePath, fullPath, true);
+                    success = true;
+                    Debug.LogWarning($"WARNING::FileDataHandler:: Had to roll back to backup file at:" +
+                        $"{backupFilePath}");
+                }
+                // otherwise, we did not yet have a backup file - so there is nothing to roll back to
+                else
+                {
+                    throw new Exception($"EXCEPTION::FileDataHandler:: Tried to roll back, but " +
+                        $"no backup file exists to roll back to");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"ERROR::FileDataHandler:: failed to roll back to backup file at: " +
+                    $"{backupFilePath}\n {e}");
+            }
+
+
+            return success;
         }
     }
 }

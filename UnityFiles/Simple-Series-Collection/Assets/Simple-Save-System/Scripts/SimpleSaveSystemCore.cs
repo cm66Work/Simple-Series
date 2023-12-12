@@ -48,6 +48,11 @@ namespace com.ES.SimpleSystems.SaveSystem
             // Gets triggered before Start().
             this.m_dataPersistenceObjects = FindAllDataPersistenceObjects();
             LoadGame();
+
+            // start up the auto save coroutine
+            if(null != m_autoSaveCoroutine)
+                StopCoroutine(m_autoSaveCoroutine);
+            m_autoSaveCoroutine = StartCoroutine(AutoSave());
         }
         #endregion
 
@@ -65,6 +70,12 @@ namespace com.ES.SimpleSystems.SaveSystem
         private FileDataHandler m_dataHandler;
 
         private string m_selectedProfileID = "";
+
+        [Header("Auto Save Configuration")]
+        [SerializeField] private float m_autoSaveTimeSeconds = 60f;
+
+        private Coroutine m_autoSaveCoroutine;
+
 
         public void DeleteProfileData(string profileID)
         {
@@ -176,6 +187,16 @@ namespace com.ES.SimpleSystems.SaveSystem
             this.m_selectedProfileID = newProfileID;
             // load the game, which will use that profile, updating our game data accordingly.
             LoadGame();
+        }
+
+        private IEnumerator AutoSave()
+        {
+            while(true)
+            {
+                yield return new WaitForSeconds(m_autoSaveTimeSeconds);
+                SaveGame();
+                Debug.Log("Auto Save Game");
+            }
         }
     }
 }
