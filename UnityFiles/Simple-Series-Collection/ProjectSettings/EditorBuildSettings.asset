@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Simple-Save-System/Demo Scenes/Scenes/Gameplay.unity
     guid: 58cadf1df4d01e747ab251f343ec3094
+  - enabled: 1
+    path: Assets/Simple-RB-Character-Controller/Demo/Scene/RBCharacterControllerDemo.unity
+    guid: 3667796ff27605e4ba583c8384a2cad3
   m_configObjects: {}
