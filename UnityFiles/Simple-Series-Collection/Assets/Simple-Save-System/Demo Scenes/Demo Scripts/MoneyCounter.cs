@@ -14,7 +14,7 @@ namespace com.ES.SimpleSystems.Demos
             m_moneyTMP.text = this.m_money.ToString();
         }
 
-        public void SaveData(ref GameData data)
+        public void SaveData(GameData data)
         {
             data.exampleInt = this.m_money;
         }

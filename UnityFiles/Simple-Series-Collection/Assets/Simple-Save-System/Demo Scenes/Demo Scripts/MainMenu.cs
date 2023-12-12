@@ -1,3 +1,4 @@
+using com.ES.SimpleSystems.SaveSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,6 +17,11 @@ namespace com.ES.SimpleSystems.Demos
         [SerializeField] private Button m_loadGameButton;
 
         private void Start()
+        {
+            DisableButtonsDependingOnData();
+        }
+
+        private void DisableButtonsDependingOnData()
         {
             if (false == SaveSystem.SimpleSaveSystemCore.instance.HasGameData())
             {
@@ -39,6 +45,7 @@ namespace com.ES.SimpleSystems.Demos
         public void ActivateMenu()
         {
             this.gameObject.SetActive(true);
+            DisableButtonsDependingOnData();
         }
 
         private void DeactivateMenu()
@@ -49,7 +56,8 @@ namespace com.ES.SimpleSystems.Demos
         public void OnContinueClicked()
         {
             DisableAllButtons();
-
+            // save the game anytime BEFORE loading a new scene.
+            SimpleSaveSystemCore.instance.SaveGame();
             // load the next scene - which will in turn load the game because of
             // OnSceneLoaded() in SimpleSaveSystemCore.
             SceneManager.LoadSceneAsync("Gameplay");

@@ -9,6 +9,6 @@ namespace com.ES.SimpleSystems.SaveSystem
         void LoadData(GameData data);
         
         // using ref to allow for data modification on not creating of duplicate data.
-        void SaveData(ref GameData data);
+        void SaveData(GameData data);
     }
 }

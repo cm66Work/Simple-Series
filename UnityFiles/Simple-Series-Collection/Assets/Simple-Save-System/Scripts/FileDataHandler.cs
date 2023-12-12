@@ -2,8 +2,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Data;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Linq.Expressions;
 
 namespace com.ES.SimpleSystems.SaveSystem
 {
@@ -86,6 +85,34 @@ namespace com.ES.SimpleSystems.SaveSystem
             {
                 Debug.LogError("Error::FileDataHandler:: Error occurred when trying to save sat to file " +
                     fullPath + "\n" +  e);
+            }
+        }
+
+        public void Delete(string profileID)
+        {
+            // base case - if the profileID is null, return right away.
+            if (null == profileID) return;
+
+            string fullPath = Path.Combine(m_dataDirPath, profileID, m_dataFileName);
+            try
+            {
+                // ensure the data file exists at this path before deleting the directory
+                if(File.Exists(fullPath))
+                {
+                    // delete the profile folder and everything within it
+                    Directory.Delete(Path.GetDirectoryName(fullPath), true);
+                }
+                else
+                {
+                    Debug.LogWarning("Tried to delete profile data, but data was not found at path: " +
+                        fullPath);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"ERROR::FileDataHandler:: " +
+                    $"Failed to delete profile data for profileID: {profileID}" +
+                    $" at path: {fullPath} \n {e} "); 
             }
         }
 

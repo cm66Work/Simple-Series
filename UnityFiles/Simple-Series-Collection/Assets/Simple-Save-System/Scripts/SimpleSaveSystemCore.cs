@@ -23,25 +23,17 @@ namespace com.ES.SimpleSystems.SaveSystem
 
             this.m_dataHandler = new FileDataHandler(Application.persistentDataPath, m_fileName);
 
-            this.m_selectedProfileID = m_dataHandler.GetMostRecentlyUpdatedProfileID();
-            if (m_overrideSelectedProfileID)
-            {
-                this.m_selectedProfileID = m_overrideProfileID;
-                Debug.LogWarning("WARNING::SimpleSaveSystemCore:: Overriding selected profile ID with: " 
-                    + m_selectedProfileID);
-            }
+            InitializeSelectedProfileID();
         }
 
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
-            SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
 
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
 
         private void OnApplicationQuit()
@@ -56,10 +48,6 @@ namespace com.ES.SimpleSystems.SaveSystem
             // Gets triggered before Start().
             this.m_dataPersistenceObjects = FindAllDataPersistenceObjects();
             LoadGame();
-        }
-        public void OnSceneUnloaded(Scene scene)
-        {
-            SaveGame();
         }
         #endregion
 
@@ -77,6 +65,27 @@ namespace com.ES.SimpleSystems.SaveSystem
         private FileDataHandler m_dataHandler;
 
         private string m_selectedProfileID = "";
+
+        public void DeleteProfileData(string profileID)
+        {
+            // delete the data from this profile ID
+            m_dataHandler.Delete(profileID);
+            // initialize the selected profile id in case we just deleted it.
+            InitializeSelectedProfileID();
+            // reload the game so that our data matches the newly selected profile ID.
+            LoadGame();
+        }
+
+        private void InitializeSelectedProfileID()
+        {
+            this.m_selectedProfileID = m_dataHandler.GetMostRecentlyUpdatedProfileID();
+            if (m_overrideSelectedProfileID)
+            {
+                this.m_selectedProfileID = m_overrideProfileID;
+                Debug.LogWarning("WARNING::SimpleSaveSystemCore:: Overriding selected profile ID with: "
+                    + m_selectedProfileID);
+            }
+        }
 
         #region New Game
         public void NewGame()
@@ -131,7 +140,7 @@ namespace com.ES.SimpleSystems.SaveSystem
             // pass the data to other scripts so they can update it.
             foreach (IDataPersistence dataPersistenceObject in m_dataPersistenceObjects)
             {
-                dataPersistenceObject.SaveData(ref m_gameData);
+                dataPersistenceObject.SaveData(m_gameData);
             }
 
             // timestamp the data so we know when it was last saved.
@@ -142,7 +151,8 @@ namespace com.ES.SimpleSystems.SaveSystem
         }
         private List<IDataPersistence> FindAllDataPersistenceObjects()
         {
-            IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>()
+            // FindObjectsOfType takes in an optional boolean to include inactive gameObjects.
+            IEnumerable<IDataPersistence> dataPersistenceObjects = FindObjectsOfType<MonoBehaviour>(true)
                 .OfType<IDataPersistence>(); 
 
             return new List<IDataPersistence>(dataPersistenceObjects);
