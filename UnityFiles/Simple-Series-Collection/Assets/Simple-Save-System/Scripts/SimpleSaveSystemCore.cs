@@ -6,11 +6,17 @@ using UnityEngine.SceneManagement;
 
 namespace com.ES.SimpleSystems.SaveSystem
 {
+    // Improvements to make:
+    // - TODO: SimpleSaveSystemCore should not be managing scene transitions.
+    //   + Fix: Abstract the scene management to another scene management Asset using Unity Events
+    //          or a scriptable object event system.
+    //          I am still on the fence if going full abstraction would be the best course of action.
+    // - TODO: Organise the script to make responsibilities more clear.
+
+
+
     public class SimpleSaveSystemCore : MonoBehaviour
     {
-        #region life cycle
-        public static SimpleSaveSystemCore instance { get; private set; }
-
         public void Awake()
         {
             if (instance != null)
@@ -25,36 +31,20 @@ namespace com.ES.SimpleSystems.SaveSystem
 
             InitializeSelectedProfileID();
         }
-
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
-
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
-
         private void OnApplicationQuit()
         {
             SaveGame();
         }
-        #endregion
 
-        #region Scene Loading
-        public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            // Gets triggered before Start().
-            this.m_dataPersistenceObjects = FindAllDataPersistenceObjects();
-            LoadGame();
-
-            // start up the auto save coroutine
-            if(null != m_autoSaveCoroutine)
-                StopCoroutine(m_autoSaveCoroutine);
-            m_autoSaveCoroutine = StartCoroutine(AutoSave());
-        }
-        #endregion
+        public static SimpleSaveSystemCore instance { get; private set; }
 
         [Header("Debugging")]
         [SerializeField] private bool m_initializeDataIfNull = false;
@@ -69,43 +59,15 @@ namespace com.ES.SimpleSystems.SaveSystem
         private List<IDataPersistence> m_dataPersistenceObjects;
         private FileDataHandler m_dataHandler;
 
-        private string m_selectedProfileID = "";
-
-        [Header("Auto Save Configuration")]
-        [SerializeField] private float m_autoSaveTimeSeconds = 60f;
-
-        private Coroutine m_autoSaveCoroutine;
-
-
-        public void DeleteProfileData(string profileID)
-        {
-            // delete the data from this profile ID
-            m_dataHandler.Delete(profileID);
-            // initialize the selected profile id in case we just deleted it.
-            InitializeSelectedProfileID();
-            // reload the game so that our data matches the newly selected profile ID.
-            LoadGame();
-        }
-
-        private void InitializeSelectedProfileID()
-        {
-            this.m_selectedProfileID = m_dataHandler.GetMostRecentlyUpdatedProfileID();
-            if (m_overrideSelectedProfileID)
-            {
-                this.m_selectedProfileID = m_overrideProfileID;
-                Debug.LogWarning("WARNING::SimpleSaveSystemCore:: Overriding selected profile ID with: "
-                    + m_selectedProfileID);
-            }
-        }
-
-        #region New Game
+        #region New Game Creation
         public void NewGame()
         {
             this.m_gameData = new GameData();
         }
+
         #endregion
 
-        #region LoadGame
+        #region Game Loading 
         public void LoadGame()
         {
             if (m_disableDataPersistence)
@@ -132,9 +94,54 @@ namespace com.ES.SimpleSystems.SaveSystem
                 dataPersistenceObjects.LoadData(m_gameData);
             }
         }
+        
+        private void InitializeSelectedProfileID()
+        {
+            this.m_selectedProfileID = m_dataHandler.GetMostRecentlyUpdatedProfileID();
+            if (m_overrideSelectedProfileID)
+            {
+                this.m_selectedProfileID = m_overrideProfileID;
+                Debug.LogWarning("WARNING::SimpleSaveSystemCore:: Overriding selected profile ID with: "
+                    + m_selectedProfileID);
+            }
+        }
+        public bool HasGameData()
+        {
+            return m_gameData != null;
+        }
+
+        public Dictionary<string, GameData> GetAllProfilesGameData()
+        {
+            return m_dataHandler.LoadAllProfiles();
+        }
+        
+        public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            // Gets triggered before Start().
+            this.m_dataPersistenceObjects = FindAllDataPersistenceObjects();
+            LoadGame();
+
+            // start up the auto save coroutine
+            if(null != m_autoSaveCoroutine)
+                StopCoroutine(m_autoSaveCoroutine);
+            m_autoSaveCoroutine = StartCoroutine(AutoSave());
+        }
+
+        public void ChangeSelectedProfileID(string newProfileID)
+        {
+            // update the profile to use for saving and loading.
+            this.m_selectedProfileID = newProfileID;
+            // load the game, which will use that profile, updating our game data accordingly.
+            LoadGame();
+        }
         #endregion
 
-        #region SaveGame
+        #region Game Saving
+        private string m_selectedProfileID = "";
+        [Header("Auto Save Configuration")]
+        [SerializeField] private float m_autoSaveTimeSeconds = 60f;
+
+        private Coroutine m_autoSaveCoroutine;
         public void SaveGame()
         {
             if (m_disableDataPersistence)
@@ -169,26 +176,6 @@ namespace com.ES.SimpleSystems.SaveSystem
             return new List<IDataPersistence>(dataPersistenceObjects);
             
         }
-        #endregion
-
-        public bool HasGameData()
-        {
-            return m_gameData != null;
-        }
-
-        public Dictionary<string, GameData> GetAllProfilesGameData()
-        {
-            return m_dataHandler.LoadAllProfiles();
-        }
-
-        public void ChangeSelectedProfileID(string newProfileID)
-        {
-            // update the profile to use for saving and loading.
-            this.m_selectedProfileID = newProfileID;
-            // load the game, which will use that profile, updating our game data accordingly.
-            LoadGame();
-        }
-
         private IEnumerator AutoSave()
         {
             while(true)
@@ -198,5 +185,19 @@ namespace com.ES.SimpleSystems.SaveSystem
                 Debug.Log("Auto Save Game");
             }
         }
+        #endregion
+
+        #region Game Delition
+        public void DeleteProfileData(string profileID)
+        {
+            // delete the data from this profile ID
+            m_dataHandler.Delete(profileID);
+            // initialize the selected profile id in case we just deleted it.
+            InitializeSelectedProfileID();
+            // reload the game so that our data matches the newly selected profile ID.
+            LoadGame();
+        }
+        #endregion
+
     }
 }
