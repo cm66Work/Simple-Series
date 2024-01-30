@@ -1,0 +1,16 @@
+{
+  "name": "com.ES.Simple-Series-Collection",
+  "version": "1.0.0",
+  "displayName": "String Extentsions",
+  "description": "A collection of simple fetures that all my games share in commom",
+  "unity": "2022.3.1f1",
+  "dependencies": {
+
+  },
+  "keywords": [ "simple", "series", "collection", "shared", "common" ],
+  "author": {
+    "name": "Alexander M",
+    "email": "cm66.work@gmail.com",
+    "url": "https://github.com/cm66Work/Simple-Series"
+  }
+}
